@@ -1,26 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Navbar1 from '../component/Navbar1';
-
-const initialQuestions = [
-    { question: "What is a Set?", answer: "A collection of distinct objects." },
-    { question: "Define Power Set.", answer: "The set of all subsets of a set, including the empty set and the set itself." },
-    { question: "What is a Proposition?", answer: "A declarative statement that is either true or false." },
-    { question: "What is a Graph?", answer: "A set of vertices connected by edges." },
-    { question: "What is a Relation?", answer: "A subset of a Cartesian product of two sets." },
-    { question: "Define Reflexive Relation.", answer: "A relation R on set A is reflexive if (a, a) ∈ R for all a ∈ A." },
-    { question: "What is a Function?", answer: "A relation where each input has exactly one output." },
-    { question: "What is an Injective Function?", answer: "A one-to-one function; no two inputs map to the same output." },
-    { question: "Define Tautology.", answer: "A proposition that is always true, regardless of the truth values of its components." },
-    { question: "What is a Bipartite Graph?", answer: "A graph whose vertices can be divided into two sets such that no edge connects vertices within the same set." }
-];
 
 const Maths = () => {
     const [search, setSearch] = useState('');
     const [flippedIndex, setFlippedIndex] = useState(null);
-    const [cards, setCards] = useState(initialQuestions);
-    const [editIndex, setEditIndex] = useState(null);
+    const [cards, setCards] = useState([]);
+    const [editId, setEditId] = useState(null);
     const [newQ, setNewQ] = useState('');
     const [newA, setNewA] = useState('');
+
+    useEffect(() => {
+        axios.get('http://localhost:3000/api/maths')
+            .then(res => setCards(res.data))
+            .catch(err => console.error('Error fetching data:', err));
+    }, []);
 
     const filtered = cards.filter(q =>
         q.question.toLowerCase().includes(search.toLowerCase())
@@ -30,32 +24,40 @@ const Maths = () => {
         setFlippedIndex(index === flippedIndex ? null : index);
     };
 
-    const handleAddOrUpdate = () => {
+    const handleAddOrUpdate = async () => {
         if (newQ.trim() === '' || newA.trim() === '') return;
-        if (editIndex !== null) {
-            const updated = [...cards];
-            updated[editIndex] = { question: newQ, answer: newA };
-            setCards(updated);
-            setEditIndex(null);
+
+        if (editId) {
+            const res = await axios.put(`http://localhost:3000/api/maths/${editId}`, {
+                question: newQ,
+                answer: newA
+            });
+            setCards(cards.map(card => card._id === editId ? res.data : card));
+            setEditId(null);
         } else {
-            setCards([...cards, { question: newQ, answer: newA }]);
+            const res = await axios.post('http://localhost:3000/api/maths', {
+                question: newQ,
+                answer: newA
+            });
+            setCards([...cards, res.data]);
         }
+
         setNewQ('');
         setNewA('');
     };
 
-    const handleDelete = (e, index) => {
+    const handleDelete = async (e, id) => {
         e.stopPropagation();
-        const updated = cards.filter((_, i) => i !== index);
-        setCards(updated);
+        await axios.delete(`http://localhost:3000/api/maths/${id}`);
+        setCards(cards.filter(card => card._id !== id));
         setFlippedIndex(null);
     };
 
-    const handleEdit = (e, index) => {
+    const handleEdit = (e, card) => {
         e.stopPropagation();
-        setNewQ(cards[index].question);
-        setNewA(cards[index].answer);
-        setEditIndex(index);
+        setNewQ(card.question);
+        setNewA(card.answer);
+        setEditId(card._id);
         setFlippedIndex(null);
     };
 
@@ -70,7 +72,7 @@ const Maths = () => {
                     <Navbar1 />
                 </div>
 
-                <h1 style={styles.title}>Discrete Maths Flashcards</h1>
+                <h1 style={styles.title}>Maths Flashcards</h1>
 
                 <input
                     type="text"
@@ -96,25 +98,31 @@ const Maths = () => {
                         style={styles.formInput}
                     />
                     <button onClick={handleAddOrUpdate} style={styles.addBtn}>
-                        {editIndex !== null ? 'Update' : 'Add'}
+                        {editId ? 'Update' : 'Add'}
                     </button>
                 </div>
 
                 <div style={styles.grid}>
                     {filtered.map((item, idx) => (
-                        <div key={idx} style={styles.cardWrapper} onClick={() => handleFlip(idx)}>
-                            <div style={{
-                                ...styles.card,
-                                transform: flippedIndex === idx ? 'rotateY(180deg)' : 'rotateY(0deg)'
-                            }}>
+                        <div
+                            key={item._id}
+                            style={styles.cardWrapper}
+                            onClick={() => handleFlip(idx)}
+                        >
+                            <div
+                                style={{
+                                    ...styles.card,
+                                    transform: flippedIndex === idx ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                                }}
+                            >
                                 <div style={{ ...styles.cardFace, ...styles.front }}>
                                     <h3 style={styles.q}>Q{idx + 1}: {item.question}</h3>
                                 </div>
                                 <div style={{ ...styles.cardFace, ...styles.back }}>
                                     <p><strong>Answer:</strong> {item.answer}</p>
                                     <div>
-                                        <button style={styles.editBtn} onClick={(e) => handleEdit(e, idx)}>Edit</button>
-                                        <button style={styles.deleteBtn} onClick={(e) => handleDelete(e, idx)}>Delete</button>
+                                        <button style={styles.editBtn} onClick={(e) => handleEdit(e, item)}>Edit</button>
+                                        <button style={styles.deleteBtn} onClick={(e) => handleDelete(e, item._id)}>Delete</button>
                                     </div>
                                 </div>
                             </div>
@@ -173,33 +181,10 @@ const styles = {
         fontSize: '16px',
         backgroundColor: 'rgba(255,255,255,0.8)'
     },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '10px',
-        marginBottom: '40px'
-    },
-    formInput: {
-        padding: '10px',
-        width: '80%',
-        maxWidth: '500px',
-        fontSize: '16px',
-        borderRadius: '8px',
-        border: '1px solid #ccc'
-    },
-    addBtn: {
-        padding: '10px 20px',
-        background: '#28a745',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: 'pointer'
-    },
     grid: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '40px',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+        gap: '30px',
         justifyItems: 'center',
         padding: '20px'
     },
@@ -231,11 +216,10 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        fontWeight: '600',
-        transition: 'all 0.3s ease-in-out'
+        fontWeight: '600'
     },
     front: {
-        background: 'linear-gradient(135deg, #ffecd2, #fcb69f)',
+        background: 'linear-gradient(135deg, #fddb92, #d1fdff)',
         color: '#333'
     },
     back: {
@@ -249,10 +233,33 @@ const styles = {
         fontSize: '1rem',
         lineHeight: '1.4'
     },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '10px',
+        marginBottom: '40px'
+    },
+    formInput: {
+        padding: '10px',
+        width: '80%',
+        maxWidth: '500px',
+        fontSize: '16px',
+        borderRadius: '8px',
+        border: '1px solid #ccc'
+    },
+    addBtn: {
+        padding: '10px 20px',
+        background: '#6f42c1',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer'
+    },
     editBtn: {
         padding: '6px 12px',
-        background: '#007bff',
-        color: 'white',
+        background: '#ffc107',
+        color: 'black',
         border: 'none',
         borderRadius: '6px',
         marginRight: '6px',
@@ -260,7 +267,7 @@ const styles = {
     },
     deleteBtn: {
         padding: '6px 12px',
-        background: '#dc3545',
+        background: '#e83e8c',
         color: 'white',
         border: 'none',
         borderRadius: '6px',
