@@ -1,4 +1,4 @@
-const user = require('../models/userModel')
+const user = require('../models/usermodel')
 const bcrypt = require('bcrypt')
 
 exports.getRoute = async (req, res) => {
