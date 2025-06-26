@@ -43,7 +43,7 @@ const Home = () => {
 
                 {/* 🔹 Footer */}
                 <footer style={styles.footer}>
-                    <p>© 2025 Flashcard App | Built with 💙 by Dharanya</p>
+                    <p>© 2025 Flashcard App</p>
                 </footer>
             </div>
         </div>
