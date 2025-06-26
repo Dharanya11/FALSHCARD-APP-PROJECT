@@ -5,14 +5,14 @@ const Home = () => {
     const navigate = useNavigate();
 
     const cards = [
-        { title: "DAA", image: "/daa.jpg", path: "/DAA" },
+        { title: "DAA", image: "/daa.jpg", path: "/Daa" },
         { title: "Maths", image: "/m.jpg", path: "/maths" },
         { title: "DBMS", image: "/dbms.jpg", path: "/dbms" },
         { title: "WT", image: "/wt.jpg", path: "/wt" },
         { title: "OS", image: "/os.jpg", path: "/os" },
         { title: "CO", image: "/co.jpg", path: "/co" },
         { title: "ITC", image: "/itc.jpg", path: "/itc" },
-        { title: "DS", image: "/ds.jpg", path: "/os" }
+        { title: "DS", image: "/ds.jpg", path: "/ds" }
     ];
 
     return (
@@ -21,6 +21,7 @@ const Home = () => {
                 <source src="/bg1.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
+
 
             <div style={styles.overlay}>
 

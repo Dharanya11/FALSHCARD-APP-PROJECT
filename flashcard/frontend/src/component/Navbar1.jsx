@@ -1,10 +1,10 @@
 import React from 'react'
-import './Navbar.css'
+import './Navbar1.css'
 import { Link } from 'react-router-dom'
-const Navbar = () => {
+const Navbar1 = () => {
     return (
         <div>
-            <div
+            {/* <div
                 style={{
                     textAlign: 'center',
                     background: 'linear-gradient(to right, #1A2980, #26D0CE)', // orange → pink → purple
@@ -14,13 +14,13 @@ const Navbar = () => {
                     fontFamily: 'Poppins, sans-serif',
                     fontWeight: 'bold',
                     letterSpacing: '3px',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5)',
+                    boxShadow: '0 4px 16px rgba(53, 35, 35, 0.5)',
                     borderBottom: '4px solid white',
                     transition: 'all 0.5s ease-in-out'
                 }}
             >
                 <h1 style={{ margin: 0 }}>Flashcard App</h1>
-            </div>
+            </div> */}
 
             <nav className='navbar'>
                 <Link to='/home' className='Link'>Home</Link>
@@ -34,4 +34,4 @@ const Navbar = () => {
     )
 }
 
-export default Navbar
+export default Navbar1
