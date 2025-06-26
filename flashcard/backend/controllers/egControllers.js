@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt')
 exports.getRoute = async (req, res) => {
     const response = await user.find();
     res.status(201).json({ data: response });
-    res.send('Get route working');
 }
 
 exports.getRouteById = async (req, res) => {
