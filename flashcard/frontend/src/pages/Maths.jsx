@@ -9,9 +9,10 @@ const Maths = () => {
     const [editId, setEditId] = useState(null);
     const [newQ, setNewQ] = useState('');
     const [newA, setNewA] = useState('');
+    const api = 'https://falshcard-app-project.onrender.com'
 
     useEffect(() => {
-        axios.get('http://localhost:3000/api/maths')
+        axios.get(`${api}/api/maths`)
             .then(res => setCards(res.data))
             .catch(err => console.error('Error fetching data:', err));
     }, []);
@@ -28,14 +29,14 @@ const Maths = () => {
         if (newQ.trim() === '' || newA.trim() === '') return;
 
         if (editId) {
-            const res = await axios.put(`http://localhost:3000/api/maths/${editId}`, {
+            const res = await axios.put(`${api}/api/maths/${editId}`, {
                 question: newQ,
                 answer: newA
             });
             setCards(cards.map(card => card._id === editId ? res.data : card));
             setEditId(null);
         } else {
-            const res = await axios.post('http://localhost:3000/api/maths', {
+            const res = await axios.post(`${api}/api/maths`, {
                 question: newQ,
                 answer: newA
             });
@@ -48,7 +49,7 @@ const Maths = () => {
 
     const handleDelete = async (e, id) => {
         e.stopPropagation();
-        await axios.delete(`http://localhost:3000/api/maths/${id}`);
+        await axios.delete(`${api}/api/maths/${id}`);
         setCards(cards.filter(card => card._id !== id));
         setFlippedIndex(null);
     };

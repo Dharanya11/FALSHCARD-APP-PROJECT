@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
     const navigate = useNavigate();
-
+    const api = 'https://falshcard-app-project.onrender.com'
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -22,7 +22,7 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch("http://localhost:3000/signup", {
+            const res = await fetch(`${api}/signup`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

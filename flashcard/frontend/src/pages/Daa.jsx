@@ -9,10 +9,11 @@ const Daa = () => {
     const [editId, setEditId] = useState(null);
     const [newQ, setNewQ] = useState('');
     const [newA, setNewA] = useState('');
+    const api = 'https://falshcard-app-project.onrender.com'
 
     // Fetch data from backend
     useEffect(() => {
-        axios.get('http://localhost:3000/api/daa')
+        axios.get(`${api}/api/daa`)
             .then(res => setCards(res.data))
             .catch(err => console.error('Error fetching data:', err));
     }, []);
@@ -30,7 +31,7 @@ const Daa = () => {
 
         if (editId) {
             // update
-            const res = await axios.put(`http://localhost:3000/api/daa/${editId}`, {
+            const res = await axios.put(`${api}/api/daa/${editId}`, {
                 question: newQ,
                 answer: newA
             });
@@ -38,7 +39,7 @@ const Daa = () => {
             setEditId(null);
         } else {
             // add
-            const res = await axios.post('http://localhost:3000/api/daa', {
+            const res = await axios.post(`${api}/api/daa`, {
                 question: newQ,
                 answer: newA
             });
@@ -51,7 +52,7 @@ const Daa = () => {
 
     const handleDelete = async (e, id) => {
         e.stopPropagation();
-        await axios.delete(`http://localhost:3000/api/daa/${id}`);
+        await axios.delete(`${api}/api/daa/${id}`);
         setCards(cards.filter(card => card._id !== id));
         setFlippedIndex(null);
     };
