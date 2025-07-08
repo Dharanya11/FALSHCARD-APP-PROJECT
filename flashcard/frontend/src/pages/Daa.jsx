@@ -9,7 +9,7 @@ const Daa = () => {
     const [editId, setEditId] = useState(null);
     const [newQ, setNewQ] = useState('');
     const [newA, setNewA] = useState('');
-    const api = 'https://falshcard-app-project.onrender.com'
+    const api = 'http://localhost:3000'
 
     // Fetch data from backend
     useEffect(() => {

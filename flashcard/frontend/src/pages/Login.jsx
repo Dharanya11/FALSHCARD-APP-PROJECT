@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const navigate = useNavigate();
-    const api = 'https://falshcard-app-project.onrender.com'
+    const api = 'http://localhost:3000'
     const [formData, setFormData] = useState({
         email: "",
         password: ""
